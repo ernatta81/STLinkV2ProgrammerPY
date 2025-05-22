@@ -5,7 +5,7 @@ import os
 import subprocess
 import RPi.GPIO as GPIO
 
-relay_pins = [17, 27, 22, 23]
+relay_pins = [17, 27, 22, 23] #24V, GND, NC, NC
 
 # Configurazione GPIO
 GPIO.setmode(GPIO.BCM)
@@ -18,16 +18,16 @@ def toggle_relay(relay_index):
     current_state = GPIO.input(relay_pins[relay_index])
     GPIO.output(relay_pins[relay_index], not current_state)
 
-def select_file():
-    file_path = filedialog.askopenfilename(filetypes=[(" ", "*.*")])
-    if file_path:
-        file_display.delete("1.0", tk.END)
-        file_display.insert(tk.END, file_path)
+#def select_file():
+#    file_path = filedialog.askopenfilename(filetypes=[(" ", "*.*")])
+#    if file_path:
+#        file_display.delete("1.0", tk.END)
+#        file_display.insert(tk.END, file_path)
         
 def check_stlink():
     stlink_command = "st-flash reset"
     result = subprocess.run(stlink_command, shell=True, capture_output=True, text=True)
-    time.sleep(1)
+    time.sleep(0.5)
     stlink_command = "st-info --probe"
     result = subprocess.run(stlink_command, shell=True, capture_output=True, text=True)
     info_lines = result.stdout.strip().split("\n")
@@ -43,7 +43,7 @@ def check_stlink():
     if len(info_lines) >= 6:
         version_label.config(text=f"{info_lines[1]}")
         serial_label.config(text=f"{info_lines[2]}")
-        chipid_label.config(text=f"{info_lines[5]}")
+        #chipid_label.config(text=f"{info_lines[5]}")
         devtype_label.config(text=f"{info_lines[6]}")
 
 def connect_device():
@@ -57,7 +57,8 @@ def connect_device():
 
 def program_device():
     output_text.delete("1.0", tk.END)
-    file_path = file_display.get("1.0", tk.END).strip()
+    file_path = "/home/ernesto/Project/FW/SafePay/CR3/LEDController/led_ctr_4.1f_ldr_4.1a.bin"
+    #file_path = file_display.get("1.0", tk.END).strip()
     if file_path:
         GPIO.output(27, GPIO.LOW)
         time.sleep(0.2)
@@ -69,7 +70,7 @@ def program_device():
         if len(info_lines) >= 6:
             version_label.config(text=f"{info_lines[1]}")
             serial_label.config(text=f"{info_lines[2]}")
-            chipid_label.config(text=f"{info_lines[5]}")
+            #chipid_label.config(text=f"{info_lines[5]}")
             devtype_label.config(text=f"{info_lines[6]}")
         time.sleep(1)
         stlink_command = f"st-flash write {file_path} 0x08000000"
@@ -88,7 +89,7 @@ def exit_program():
 
 # Creazione della GUI
 root = tk.Tk()
-#root.attributes("-fullscreen", True)
+root.attributes("-fullscreen", True)
 root.title("ST-Link ernatta")
 
 frame_left = tk.Frame(root)
@@ -104,8 +105,8 @@ version_label = tk.Label(frame_left, text="Versione: --")
 version_label.pack()
 serial_label = tk.Label(frame_left, text="Seriale: --")
 serial_label.pack()
-chipid_label = tk.Label(frame_left, text="Chip ID: --")
-chipid_label.pack()
+#chipid_label = tk.Label(frame_left, text="Chip ID: --")
+#chipid_label.pack()
 devtype_label = tk.Label(frame_left, text="Dev-Type: --")
 devtype_label.pack()
 
@@ -113,19 +114,19 @@ devtype_label.pack()
 #connect_button = tk.Button(frame_left, text="Connetti", command=connect_device, height=2, width=15, fg="white", bg="green")
 #connect_button.pack(pady=5)
 
-select_button = tk.Button(frame_left, text="Select File", command=select_file)
-select_button.pack()
+#select_button = tk.Button(frame_left, text="Select File", command=select_file)
+#select_button.pack()
 
-# Box con scrollbar
-file_frame = tk.Frame(frame_left)
-file_frame.pack(fill=tk.X, expand=True)
-file_display_scroll = tk.Scrollbar(file_frame, orient=tk.HORIZONTAL)
-file_display = tk.Text(file_frame, wrap=tk.NONE, height=1, width=30, xscrollcommand=file_display_scroll.set)
-file_display.pack(side=tk.LEFT, fill=tk.X, expand=True)
-file_display_scroll.pack(side=tk.BOTTOM, fill=tk.X)
-file_display_scroll.config(command=file_display.xview)
+# Box FILE con scrollbar
+#file_frame = tk.Frame(frame_left)
+#file_frame.pack(fill=tk.X, expand=True)
+#file_display_scroll = tk.Scrollbar(file_frame, orient=tk.HORIZONTAL)
+#file_display = tk.Text(file_frame, wrap=tk.NONE, height=1, width=30, xscrollcommand=file_display_scroll.set)
+#file_display.pack(side=tk.LEFT, fill=tk.X, expand=True)
+#file_display_scroll.pack(side=tk.BOTTOM, fill=tk.X)
+#file_display_scroll.config(command=file_display.xview)
 
-program_button = tk.Button(frame_left, text="Program device", command=program_device, height=5, width=15, fg="white", bg="green")
+program_button = tk.Button(frame_left, text="Program device", command=program_device, height=10, width=55, fg="white", bg="green")
 program_button.pack(pady=3)
 
 # Pulsanti controllo relè
@@ -135,8 +136,8 @@ for i in range(1):
     btn.pack(pady=2)
     relay_buttons.append(btn)"""
 
-exit_button = tk.Button(frame_left, text="Exit Program", command=exit_program, height=2, width=10, fg="white", bg="red")
-exit_button.pack(pady=5)
+exit_button = tk.Button(frame_left, text="Exit Program", command=exit_program, height=3, width=35, fg="white", bg="red")
+exit_button.pack(pady=25)
 
 #box output
 output_frame = tk.Frame(frame_right)
@@ -145,7 +146,7 @@ output_frame.pack(fill=tk.BOTH, expand=True)
 scrollbar = tk.Scrollbar(output_frame)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-output_text = tk.Text(output_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set, height=20, width=50)
+output_text = tk.Text(output_frame, wrap=tk.WORD, yscrollcommand=scrollbar.set, height=20, width=20)
 output_text.pack(fill=tk.BOTH, expand=True)
 scrollbar.config(command=output_text.yview)
 
