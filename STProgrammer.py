@@ -83,6 +83,15 @@ def program_device():
         GPIO.output(27, GPIO.HIGH)
         output_text.see(tk.END)
 
+def verifica():
+    GPIO.output(27, GPIO.LOW)
+    time.sleep(0.2)
+    GPIO.output(17, GPIO.LOW)
+    time.sleep(2)
+    GPIO.output(17, GPIO.HIGH)
+    time.sleep(0.2)
+    GPIO.output(27, GPIO.HIGH)
+
 def exit_program():
     GPIO.cleanup()
     root.destroy()
@@ -129,12 +138,10 @@ devtype_label.pack()
 program_button = tk.Button(frame_left, text="Program device", command=program_device, height=10, width=55, fg="white", bg="green")
 program_button.pack(pady=3)
 
-# Pulsanti controllo relè
-"""relay_buttons = []
-for i in range(1):
-    btn = tk.Button(frame_left, text=f"Relay toggle {i+1}", command=lambda i=i: toggle_relay(i))
-    btn.pack(pady=2)
-    relay_buttons.append(btn)"""
+# Pulsante verifica
+verify_btn = tk.Button(frame_left, text=f"Verifica ", command=verifica, height=4, width=35, fg="orange", bg="blue")
+verify_btn.pack(pady=10)
+    
 
 exit_button = tk.Button(frame_left, text="Exit Program", command=exit_program, height=3, width=35, fg="white", bg="red")
 exit_button.pack(pady=25)
