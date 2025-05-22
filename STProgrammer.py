@@ -137,12 +137,12 @@ devtype_label.pack()
 #file_display_scroll.pack(side=tk.BOTTOM, fill=tk.X)
 #file_display_scroll.config(command=file_display.xview)
 
-program_button = tk.Button(frame_left, text="Program device", command=program_device, height=10, width=55, fg="white", bg="green")
+program_button = tk.Button(frame_left, text="Program device", command=program_device, height=15, width=55, fg="white", bg="green")
 program_button.pack(pady=3)
 
 # Pulsante verifica
-verify_btn = tk.Button(frame_left, text=f"Verifica ", command=verifica, height=4, width=35, fg="orange", bg="blue")
-verify_btn.pack(pady=10)
+#verify_btn = tk.Button(frame_left, text=f"Verifica ", command=verifica, height=4, width=35, fg="orange", bg="blue")
+#verify_btn.pack(pady=10)
     
 
 exit_button = tk.Button(frame_left, text="Exit Program", command=exit_program, height=3, width=35, fg="white", bg="red")
