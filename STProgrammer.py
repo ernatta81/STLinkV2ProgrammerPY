@@ -56,32 +56,34 @@ def connect_device():
     GPIO.output(27, GPIO.HIGH)
 
 def program_device():
-    output_text.delete("1.0", tk.END)
+    output_text.delete("1.0", tk.END)  # Pulizia della box output_text
+    output_text.update()
+    
     file_path = "/home/ernesto/Project/FW/SafePay/CR3/LEDController/led_ctr_4.1f_ldr_4.1a.bin"
-    #file_path = file_display.get("1.0", tk.END).strip()
     if file_path:
         GPIO.output(27, GPIO.LOW)
         time.sleep(0.2)
         GPIO.output(17, GPIO.LOW)
         time.sleep(1)
-        stlink_command = "st-flash reset"
-        result = subprocess.run(stlink_command, shell=True, capture_output=True, text=True)
-        info_lines = result.stdout.strip().split("\n")
-        if len(info_lines) >= 6:
-            version_label.config(text=f"{info_lines[1]}")
-            serial_label.config(text=f"{info_lines[2]}")
-            #chipid_label.config(text=f"{info_lines[5]}")
-            devtype_label.config(text=f"{info_lines[6]}")
-        time.sleep(1)
-        stlink_command = f"st-flash write {file_path} 0x08000000"
-        result = subprocess.run(stlink_command, shell=True, capture_output=True, text=True)
         
-        output_text.insert(tk.END, f"Result: {result.stdout}\n")
-        time.sleep(1)
+        stlink_command = f"st-flash write {file_path} 0x08000000"
+        process = subprocess.Popen(stlink_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        for line in process.stdout:
+            output_text.insert(tk.END, line)
+            output_text.see(tk.END)
+            output_text.update()
+
+        if "64/64" in line.strip():
+            output_text.insert(tk.END, "\nProgrammazione terminata!\n")
+            output_text.see(tk.END)
+            output_text.update()
+
+        process.wait()
+        
         GPIO.output(17, GPIO.HIGH)
         time.sleep(0.2)
         GPIO.output(27, GPIO.HIGH)
-        output_text.see(tk.END)
 
 def verifica():
     GPIO.output(27, GPIO.LOW)
